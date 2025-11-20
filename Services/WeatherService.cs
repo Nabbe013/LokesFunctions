@@ -24,9 +24,9 @@ namespace WeatherFunctionTest.Services
             {
                 var url = "https://weatherapi.dreammaker-it.se/Forecast?city=Linkoping&lang=se";
 
-                var response = await _httpClient.GetFromJsonAsync<WeatherDTO>(url);
+                var response = await _httpClient.GetFromJsonAsync<WeatherDTO>(url) ?? new WeatherDTO();
 
-                if (response == null)
+            if (response == null)
                 {
                     return new WeatherDTO();
                 }

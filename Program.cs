@@ -1,5 +1,7 @@
+using Azure.Data.Tables;
 using LokesFunctions.Services;
 using Microsoft.Azure.Functions.Worker;
+using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
 using WeatherFunctionTest;
@@ -14,10 +16,16 @@ var host = new HostBuilder()
         services.AddApplicationInsightsTelemetryWorkerService();
         services.ConfigureFunctionsApplicationInsights();
 
-        services.AddSingleton<FakeTableClient>();
+        services.AddSingleton<TableServiceClient>( sp =>
+        {
+            var configuration = sp.GetRequiredService<IConfiguration>();
+            string connString = configuration["AzureWebJobsStorage"];
+            return new TableServiceClient(connString);
+        });
+
         services.AddHttpClient<WeatherService>();
         services.AddHttpClient<QuoteService>();
-        services.AddSingleton<Functions>();
+       
 
     })
     .Build();
